@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Gateway 보안 평가 프레임워크 — 아키텍처 다이어그램</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: #f8f9fa;
+    color: #1a1a2e;
+    padding: 40px 20px;
+  }
+  .container { max-width: 800px; margin: 0 auto; }
+  h1 {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 48px;
+  }
+  .diagram-section {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 32px;
+  }
+  .diagram-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 4px;
+  }
+  .diagram-desc {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 20px;
+  }
+  svg text { font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
+  .node-rect { rx: 8; }
+  .label-14 { font-size: 14px; font-weight: 600; }
+  .label-12 { font-size: 12px; font-weight: 400; }
+  .label-11 { font-size: 11px; font-weight: 400; }
+  .arr-line { stroke-width: 1.5; }
+
+  @media print {
+    body { background: #fff; padding: 20px; }
+    .diagram-section { border: 1px solid #ddd; break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<h1>LLM Gateway 보안 평가 프레임워크</h1>
+
+
+<!-- ═══════════════════════════════════════ -->
+<!-- 다이어그램 1: 프로젝트 전체 구조 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="diagram-section">
+<div class="diagram-title">1. 프로젝트 전체 구조</div>
+<div class="diagram-desc">범용 프레임워크 — 퍼징 도구 + 2축 평가로 모든 LLM Gateway를 평가</div>
+<svg width="100%" viewBox="0 0 680 520">
+<defs>
+  <marker id="a1" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<rect x="40" y="16" width="600" height="488" rx="16" fill="#f3f0ff" stroke="#7c3aed" stroke-width="0.8"/>
+<text x="340" y="44" text-anchor="middle" class="label-14" fill="#5b21b6">LLM Gateway 보안 평가 프레임워크</text>
+<text x="340" y="62" text-anchor="middle" class="label-12" fill="#7c3aed">범용 설계 — 모든 LLM Gateway에 적용 가능</text>
+
+<rect x="70" y="82" width="260" height="104" rx="10" fill="#fef2f2" stroke="#ef4444" stroke-width="0.6"/>
+<text x="200" y="108" text-anchor="middle" class="label-14" fill="#991b1b">자동화 퍼징 도구</text>
+<text x="200" y="126" text-anchor="middle" class="label-12" fill="#b91c1c">페이로드 자동 생성</text>
+<text x="200" y="142" text-anchor="middle" class="label-12" fill="#b91c1c">한국어 + Function call</text>
+<text x="200" y="158" text-anchor="middle" class="label-12" fill="#b91c1c">10,000건+ 공격</text>
+
+<rect x="350" y="82" width="260" height="104" rx="10" fill="#f0fdfa" stroke="#14b8a6" stroke-width="0.6"/>
+<text x="480" y="108" text-anchor="middle" class="label-14" fill="#115e59">2축 평가 엔진</text>
+<text x="480" y="126" text-anchor="middle" class="label-12" fill="#0f766e">축 1: 방어율 (차단률)</text>
+<text x="480" y="142" text-anchor="middle" class="label-12" fill="#0f766e">축 2: 성능 오버헤드</text>
+<text x="480" y="158" text-anchor="middle" class="label-12" fill="#0f766e">Latency / TTFT / RPS</text>
+
+<line x1="200" y1="186" x2="200" y2="230" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a1)"/>
+<line x1="480" y1="186" x2="480" y2="230" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a1)"/>
+<text x="340" y="218" text-anchor="middle" class="label-11" fill="#6b7280">동일 공격 세트를 모든 Gateway에 적용</text>
+
+<rect x="70" y="240" width="130" height="52" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="0.6"/>
+<text x="135" y="260" text-anchor="middle" class="label-14" fill="#1e40af">LiteLLM</text>
+<text x="135" y="278" text-anchor="middle" class="label-11" fill="#2563eb">심층 분석</text>
+
+<rect x="215" y="240" width="130" height="52" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="0.6"/>
+<text x="280" y="260" text-anchor="middle" class="label-14" fill="#1e40af">Kong AI</text>
+<text x="280" y="278" text-anchor="middle" class="label-11" fill="#2563eb">횡단 비교</text>
+
+<rect x="360" y="240" width="130" height="52" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="0.6"/>
+<text x="425" y="260" text-anchor="middle" class="label-14" fill="#1e40af">Portkey</text>
+<text x="425" y="278" text-anchor="middle" class="label-11" fill="#2563eb">횡단 비교</text>
+
+<rect x="505" y="240" width="130" height="52" rx="8" fill="#f3f4f6" stroke="#9ca3af" stroke-width="0.6"/>
+<text x="570" y="260" text-anchor="middle" class="label-14" fill="#374151">Gateway N</text>
+<text x="570" y="278" text-anchor="middle" class="label-11" fill="#6b7280">확장 가능</text>
+
+<line x1="340" y1="292" x2="340" y2="340" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a1)"/>
+
+<rect x="70" y="348" width="260" height="52" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="0.6"/>
+<text x="200" y="368" text-anchor="middle" class="label-14" fill="#166534">비교 분석 매트릭스</text>
+<text x="200" y="386" text-anchor="middle" class="label-11" fill="#15803d">방어율 x 성능 x 한국어</text>
+
+<rect x="350" y="348" width="260" height="52" rx="8" fill="#fef2f2" stroke="#ef4444" stroke-width="0.6"/>
+<text x="480" y="368" text-anchor="middle" class="label-14" fill="#991b1b">End-to-end 공격 시연</text>
+<text x="480" y="386" text-anchor="middle" class="label-11" fill="#b91c1c">RAG + PII 유출 시나리오</text>
+
+<line x1="200" y1="400" x2="280" y2="432" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a1)"/>
+<line x1="480" y1="400" x2="400" y2="432" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a1)"/>
+
+<rect x="200" y="428" width="280" height="50" rx="8" fill="#f3f0ff" stroke="#7c3aed" stroke-width="0.6"/>
+<text x="340" y="448" text-anchor="middle" class="label-14" fill="#5b21b6">최종 산출물</text>
+<text x="340" y="466" text-anchor="middle" class="label-11" fill="#6d28d9">논문 + 퍼징 도구 + 벤치마크 + 시연</text>
+</svg>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- 다이어그램 2: 퍼징 도구 내부 구조 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="diagram-section">
+<div class="diagram-title">2. 자동화 퍼징 도구 내부 구조</div>
+<div class="diagram-desc">Gateway 비종속 — HTTP 엔드포인트 범용 공격 + 한국어 특화 모듈</div>
+<svg width="100%" viewBox="0 0 680 460">
+<defs>
+  <marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<rect x="40" y="16" width="600" height="428" rx="16" fill="#fef2f2" stroke="#ef4444" stroke-width="0.8"/>
+<text x="340" y="44" text-anchor="middle" class="label-14" fill="#991b1b">자동화 퍼징 도구 (Python)</text>
+<text x="340" y="62" text-anchor="middle" class="label-12" fill="#b91c1c">Gateway 비종속 — HTTP 엔드포인트 범용 공격</text>
+
+<rect x="70" y="82" width="170" height="96" rx="8" fill="#f3f0ff" stroke="#7c3aed" stroke-width="0.6"/>
+<text x="155" y="106" text-anchor="middle" class="label-14" fill="#5b21b6">모듈 A</text>
+<text x="155" y="124" text-anchor="middle" class="label-12" fill="#6d28d9">페이로드 생성</text>
+<text x="155" y="142" text-anchor="middle" class="label-11" fill="#7c3aed">Base64, 유니코드</text>
+<text x="155" y="158" text-anchor="middle" class="label-11" fill="#7c3aed">특수문자 mutation</text>
+
+<rect x="255" y="82" width="170" height="96" rx="8" fill="#fdf2f8" stroke="#ec4899" stroke-width="0.6"/>
+<text x="340" y="106" text-anchor="middle" class="label-14" fill="#9d174d">모듈 B</text>
+<text x="340" y="124" text-anchor="middle" class="label-12" fill="#be185d">한국어 특화</text>
+<text x="340" y="142" text-anchor="middle" class="label-11" fill="#db2777">자모분리, 초성 인코딩</text>
+<text x="340" y="158" text-anchor="middle" class="label-11" fill="#db2777">띄어쓰기 변조</text>
+
+<rect x="440" y="82" width="170" height="96" rx="8" fill="#f0fdfa" stroke="#14b8a6" stroke-width="0.6"/>
+<text x="525" y="106" text-anchor="middle" class="label-14" fill="#115e59">모듈 C</text>
+<text x="525" y="124" text-anchor="middle" class="label-12" fill="#0f766e">Function call</text>
+<text x="525" y="142" text-anchor="middle" class="label-11" fill="#0d9488">SQL injection 삽입</text>
+<text x="525" y="158" text-anchor="middle" class="label-11" fill="#0d9488">파라미터 조작</text>
+
+<line x1="155" y1="178" x2="155" y2="210" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a2)"/>
+<line x1="340" y1="178" x2="340" y2="210" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a2)"/>
+<line x1="525" y1="178" x2="525" y2="210" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a2)"/>
+
+<rect x="100" y="212" width="480" height="40" rx="8" fill="#f3f4f6" stroke="#9ca3af" stroke-width="0.6"/>
+<text x="340" y="237" text-anchor="middle" class="label-14" fill="#374151">HTTP 공격 디스패처 (Gateway 엔드포인트로 전송)</text>
+
+<line x1="340" y1="252" x2="340" y2="284" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a2)"/>
+
+<rect x="100" y="286" width="140" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="0.6"/>
+<text x="170" y="311" text-anchor="middle" class="label-14" fill="#1e40af">LiteLLM</text>
+
+<rect x="260" y="286" width="140" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="0.6"/>
+<text x="330" y="311" text-anchor="middle" class="label-14" fill="#1e40af">Kong AI</text>
+
+<rect x="420" y="286" width="140" height="40" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="0.6"/>
+<text x="490" y="311" text-anchor="middle" class="label-14" fill="#1e40af">Portkey</text>
+
+<line x1="170" y1="326" x2="230" y2="362" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a2)"/>
+<line x1="330" y1="326" x2="330" y2="362" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a2)"/>
+<line x1="490" y1="326" x2="430" y2="362" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a2)"/>
+
+<rect x="140" y="364" width="190" height="48" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="0.6"/>
+<text x="235" y="384" text-anchor="middle" class="label-14" fill="#166534">결과 수집 / 분류</text>
+<text x="235" y="400" text-anchor="middle" class="label-11" fill="#15803d">차단 / 마스킹 / 통과</text>
+
+<rect x="350" y="364" width="190" height="48" rx="8" fill="#f0fdf4" stroke="#22c55e" stroke-width="0.6"/>
+<text x="445" y="384" text-anchor="middle" class="label-14" fill="#166534">통계 리포트</text>
+<text x="445" y="400" text-anchor="middle" class="label-11" fill="#15803d">CSV / JSON 출력</text>
+
+<line x1="330" y1="388" x2="348" y2="388" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a2)"/>
+</svg>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- 다이어그램 3: End-to-End 공격 시나리오 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="diagram-section">
+<div class="diagram-title">3. End-to-End 공격 시나리오</div>
+<div class="diagram-desc">Guardrail ON 상태에서 한국어 PII가 유출되는 전체 경로</div>
+<svg width="100%" viewBox="0 0 680 580">
+<defs>
+  <marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<rect x="240" y="16" width="200" height="40" rx="8" fill="#f3f4f6" stroke="#9ca3af" stroke-width="0.6"/>
+<text x="340" y="41" text-anchor="middle" class="label-14" fill="#374151">공격자 (내부 직원)</text>
+
+<line x1="340" y1="56" x2="340" y2="86" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a3)"/>
+<text x="456" y="76" text-anchor="start" class="label-11" fill="#6b7280">"김철수 주민번호 알려줘"</text>
+
+<rect x="160" y="88" width="300" height="40" rx="8" fill="#f3f0ff" stroke="#7c3aed" stroke-width="0.6"/>
+<text x="310" y="113" text-anchor="middle" class="label-14" fill="#5b21b6">Presidio guardrail (pre_call)</text>
+<rect x="470" y="92" width="80" height="32" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="0.5"/>
+<text x="510" y="113" text-anchor="middle" class="label-12" fill="#991b1b">통과!</text>
+
+<line x1="340" y1="128" x2="340" y2="162" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a3)"/>
+
+<rect x="60" y="190" width="150" height="64" rx="8" fill="#f0fdfa" stroke="#14b8a6" stroke-width="0.6"/>
+<text x="135" y="216" text-anchor="middle" class="label-14" fill="#115e59">더미 고객 DB</text>
+<text x="135" y="236" text-anchor="middle" class="label-11" fill="#0f766e">한국인 PII 1000건</text>
+
+<line x1="210" y1="218" x2="248" y2="190" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a3)"/>
+<text x="200" y="186" text-anchor="end" class="label-11" fill="#6b7280">RAG 검색</text>
+
+<rect x="250" y="164" width="260" height="52" rx="8" fill="#eff6ff" stroke="#3b82f6" stroke-width="0.6"/>
+<text x="380" y="186" text-anchor="middle" class="label-14" fill="#1e40af">LLM API (GPT-4o)</text>
+<text x="380" y="204" text-anchor="middle" class="label-11" fill="#2563eb">DB 참조하여 답변 생성</text>
+
+<line x1="380" y1="216" x2="380" y2="256" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a3)"/>
+<text x="500" y="242" text-anchor="start" class="label-11" fill="#6b7280">응답: "990101-1234567"</text>
+
+<rect x="160" y="258" width="300" height="40" rx="8" fill="#f3f0ff" stroke="#7c3aed" stroke-width="0.6"/>
+<text x="310" y="283" text-anchor="middle" class="label-14" fill="#5b21b6">Presidio guardrail (post_call)</text>
+<rect x="470" y="262" width="80" height="32" rx="6" fill="#fef2f2" stroke="#ef4444" stroke-width="0.5"/>
+<text x="510" y="283" text-anchor="middle" class="label-12" fill="#991b1b">통과!</text>
+
+<line x1="340" y1="298" x2="340" y2="334" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a3)"/>
+
+<rect x="240" y="336" width="200" height="40" rx="8" fill="#f3f4f6" stroke="#9ca3af" stroke-width="0.6"/>
+<text x="340" y="361" text-anchor="middle" class="label-14" fill="#374151">공격자에게 응답 도착</text>
+
+<line x1="340" y1="376" x2="340" y2="410" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a3)"/>
+
+<rect x="180" y="412" width="320" height="48" rx="8" fill="#fef2f2" stroke="#dc2626" stroke-width="0.8"/>
+<text x="340" y="432" text-anchor="middle" class="label-14" fill="#991b1b">PII 유출 성공</text>
+<text x="340" y="450" text-anchor="middle" class="label-12" fill="#b91c1c">Guardrail ON 상태에서 주민번호 유출</text>
+
+<rect x="140" y="486" width="400" height="56" rx="8" fill="none" stroke="#dc2626" stroke-width="0.6" stroke-dasharray="4 4"/>
+<text x="340" y="508" text-anchor="middle" class="label-14" fill="#991b1b">핵심: "Guardrail ON" ≠ "안전"</text>
+<text x="340" y="528" text-anchor="middle" class="label-12" fill="#b91c1c">거짓 안심 (false sense of security)</text>
+</svg>
+</div>
+
+<!-- ═══════════════════════════════════════ -->
+<!-- 다이어그램 4: 2축 평가 프레임워크 -->
+<!-- ═══════════════════════════════════════ -->
+<div class="diagram-section">
+<div class="diagram-title">4. 2축 평가 프레임워크</div>
+<div class="diagram-desc">방어율 + 성능 오버헤드를 동시에 측정하여 실무 적용 가이드라인 제시</div>
+<svg width="100%" viewBox="0 0 680 420">
+<defs>
+  <marker id="a4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<rect x="40" y="16" width="600" height="388" rx="16" fill="#f3f0ff" stroke="#7c3aed" stroke-width="0.8"/>
+<text x="340" y="44" text-anchor="middle" class="label-14" fill="#5b21b6">2축 평가 프레임워크</text>
+
+<rect x="60" y="64" width="280" height="196" rx="12" fill="#fef2f2" stroke="#ef4444" stroke-width="0.6"/>
+<text x="200" y="88" text-anchor="middle" class="label-14" fill="#991b1b">축 1: 방어율 (%)</text>
+<text x="200" y="106" text-anchor="middle" class="label-11" fill="#b91c1c">공격 카테고리별 차단 성공률</text>
+
+<rect x="76" y="120" width="120" height="32" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="0.5"/>
+<text x="136" y="141" text-anchor="middle" class="label-12" fill="#374151">PII 유출</text>
+<rect x="206" y="120" width="120" height="32" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="0.5"/>
+<text x="266" y="141" text-anchor="middle" class="label-12" fill="#374151">Prompt injection</text>
+<rect x="76" y="164" width="120" height="32" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="0.5"/>
+<text x="136" y="185" text-anchor="middle" class="label-12" fill="#374151">한국어 우회</text>
+<rect x="206" y="164" width="120" height="32" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="0.5"/>
+<text x="266" y="185" text-anchor="middle" class="label-12" fill="#374151">Function call</text>
+<rect x="76" y="208" width="250" height="32" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="0.5"/>
+<text x="200" y="229" text-anchor="middle" class="label-12" fill="#374151">영어 vs 한국어 차단율 비교</text>
+
+<rect x="360" y="64" width="260" height="196" rx="12" fill="#f0fdfa" stroke="#14b8a6" stroke-width="0.6"/>
+<text x="490" y="88" text-anchor="middle" class="label-14" fill="#115e59">축 2: 성능 오버헤드</text>
+<text x="490" y="106" text-anchor="middle" class="label-11" fill="#0f766e">Guardrail ON/OFF 비교</text>
+
+<rect x="376" y="120" width="228" height="32" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="0.5"/>
+<text x="490" y="141" text-anchor="middle" class="label-12" fill="#374151">응답 지연시간 (Latency)</text>
+<rect x="376" y="164" width="228" height="32" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="0.5"/>
+<text x="490" y="185" text-anchor="middle" class="label-12" fill="#374151">TTFT (첫 토큰 시간)</text>
+<rect x="376" y="208" width="228" height="32" rx="6" fill="#f3f4f6" stroke="#d1d5db" stroke-width="0.5"/>
+<text x="490" y="229" text-anchor="middle" class="label-12" fill="#374151">처리량 (RPS)</text>
+
+<line x1="200" y1="260" x2="200" y2="296" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a4)"/>
+<line x1="490" y1="260" x2="490" y2="296" stroke="#6b7280" stroke-width="1.2" marker-end="url(#a4)"/>
+
+<rect x="60" y="298" width="560" height="80" rx="10" fill="#f0fdf4" stroke="#22c55e" stroke-width="0.6"/>
+<text x="340" y="324" text-anchor="middle" class="label-14" fill="#166534">최종 비교 매트릭스</text>
+<text x="340" y="344" text-anchor="middle" class="label-12" fill="#15803d">Gateway별 x 공격카테고리별 x Guardrail설정별</text>
+<text x="340" y="364" text-anchor="middle" class="label-11" fill="#15803d">"A Gateway는 방어율 80%지만 지연 0.1초 / B는 95%지만 2초"</text>
+</svg>
+</div>
+
+</div>
+</body>
+</html>

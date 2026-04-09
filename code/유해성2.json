@@ -1,0 +1,224 @@
+{
+  "policy_name": "korean_harmfulness_guardrail_ultra",
+  "version": "4.0",
+  "stage": "input",
+  "enabled": true,
+
+  "pipeline": [
+    "unicode_normalize",
+    "deobfuscate",
+    "detect_evasion",
+    "detect_patterns",
+    "semantic_detect",
+    "score",
+    "decide"
+  ],
+
+  "normalization": {
+    "unicode_nfkc": true,
+    "remove_zero_width": true,
+    "collapse_spaces": true,
+    "normalize_fullwidth": true,
+    "normalize_halfwidth": true,
+    "jamo_recompose": true,
+    "strip_control_chars": true,
+    "lowercase": true
+  },
+
+  "deobfuscation": {
+    "enabled": true,
+    "methods": [
+      "remove_symbols",
+      "merge_spaced_chars",
+      "restore_leet_speak",
+      "normalize_homoglyphs",
+      "phonetic_restore",
+      "emoji_strip",
+      "repeat_char_reduce"
+    ]
+  },
+
+  "evasion_detection": {
+    "enabled": true,
+    "rules": [
+      "spacing_split",
+      "random_spacing",
+      "extreme_spacing",
+      "jamo_split",
+      "jamo_random_mix",
+      "choseong_only",
+      "jungseong_drop",
+      "jongseong_drop",
+      "fullwidth_char",
+      "halfwidth_mix",
+      "symbol_injection",
+      "heavy_symbol_injection",
+      "punctuation_noise",
+      "underscore_split",
+      "hyphen_split",
+      "dot_split",
+      "newline_injection",
+      "tab_injection",
+      "carriage_return",
+      "zero_width_insertion",
+      "emoji_injection",
+      "mixed_language",
+      "hangul_english_mix",
+      "leet_speak",
+      "homoglyph_attack",
+      "unicode_confusable",
+      "visual_similar_char",
+      "repeated_chars",
+      "character_duplication",
+      "random_noise_injection",
+      "intent_fragmentation",
+      "context_split_attack",
+      "base64_encoding",
+      "hex_encoding",
+      "url_encoding",
+      "rot13_like_encoding",
+      "phonetic_substitution",
+      "slang_substitution",
+      "abbreviation",
+      "whitespace_padding",
+      "token_breaking",
+      "sentence_fragmentation"
+    ],
+    "weight": 30
+  },
+
+  "detection": {
+    "categories": [
+
+      {
+        "name": "abuse_extreme",
+        "patterns": [
+          "시발","씨발","ㅅㅂ","ㅆㅂ","병신","븅신","빙신",
+          "개새끼","꺼져","죽어","뒤져","좆","좆같","존나",
+          "씹새끼","호로새끼","미친놈","미친년","개같은",
+          "개소리","지랄","염병","망할"
+        ],
+        "weight": 30
+      },
+
+      {
+        "name": "hate_speech_extreme",
+        "patterns": [
+          "열등하다","없애야 한다","다 죽여","혐오한다",
+          "벌레 같은","인간도 아니다","쓸모없는 존재",
+          "격리해야","추방해야","박멸해야",
+          "청소해야 한다","제거해야 한다"
+        ],
+        "weight": 50
+      },
+
+      {
+        "name": "sexual_content_explicit",
+        "patterns": [
+          "야한 사진","벗은 사진","성관계","자위",
+          "성행위","야동","음란물","성적 묘사",
+          "노골적인 성적 표현","성인 영상",
+          "성적 자극","성적 쾌락","성적 행위",
+          "포르노","성적 대화","성적 요구"
+        ],
+        "weight": 55
+      },
+
+      {
+        "name": "illegal_activity_advanced",
+        "patterns": [
+          "마약 구매","마약 제조","필로폰","대마초",
+          "해킹 방법","계정 탈취","비밀번호 크랙",
+          "DDOS 공격","랜섬웨어 만드는",
+          "불법 다운로드","토렌트 공유",
+          "폭탄 제조","총기 제작",
+          "사기치는 방법","보이스피싱",
+          "돈세탁","불법 도박",
+          "위조 신분증","몰카","불법 촬영",
+          "카드 복제","계좌 해킹"
+        ],
+        "weight": 80
+      },
+
+      {
+        "name": "violence_extreme",
+        "patterns": [
+          "죽여버리","칼로 찌","패버리","불태우",
+          "살인 방법","폭행 방법","공격 방법",
+          "테러 방법","قتل","attack method",
+          "사람을 해치는 방법"
+        ],
+        "weight": 70
+      },
+
+      {
+        "name": "self_harm_critical",
+        "patterns": [
+          "죽고 싶다","자해하는 방법",
+          "목매는 방법","손목 긋는",
+          "약으로 죽는","자살 방법",
+          "극단적 선택","자해 유도"
+        ],
+        "weight": 85
+      },
+
+      {
+        "name": "harassment_advanced",
+        "patterns": [
+          "협박","가만 안 둬","보복하겠다",
+          "신상 털","스토킹","괴롭히겠다",
+          "협박 메시지","위협 발언"
+        ],
+        "weight": 50
+      }
+
+    ]
+  },
+
+  "semantic_detection": {
+    "enabled": true,
+    "model": "harmfulness_classifier",
+    "threshold": 0.75,
+    "weight": 40
+  },
+
+  "risk_scoring": {
+    "thresholds": {
+      "allow": 0,
+      "review": 30,
+      "block": 55,
+      "alert": 75
+    },
+    "aggregation": "max + evasion_bonus"
+  },
+
+  "decision": {
+    "priority": [
+      "alert",
+      "block",
+      "review",
+      "allow"
+    ],
+    "multi_match_rule": "highest_risk"
+  },
+
+  "actions": {
+    "allow": {
+      "forward": true
+    },
+    "review": {
+      "forward": false,
+      "message": "검토가 필요한 요청입니다."
+    },
+    "block": {
+      "forward": false,
+      "message": "유해성이 감지되어 차단되었습니다."
+    },
+    "alert": {
+      "forward": false,
+      "message": "심각한 유해/불법 행위가 감지되었습니다.",
+      "notify": true,
+      "log_level": "critical"
+    }
+  }
+}

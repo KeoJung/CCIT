@@ -1,0 +1,103 @@
+
+{
+  "harmfulness_guardrail_config": {
+    "version": "1.0",
+    "detection_rules": {
+      "violence": {
+        "keywords": ["폭력", "살인", "죽이", "때리", "공격", "violence", "kill", "attack", "murder"],
+        "patterns": [
+          ".*(?:사람|동물).*(?:해치|죽이|공격).*",
+          ".*(?:폭력|violence).*(?:방법|how to).*",
+          ".*(?:무기|weapon).*(?:만들|제작|create).*"
+        ],
+        "severity": "high",
+        "mutation_variants": {
+          "leet_speak": ["v10l3nc3", "k1ll", "4tt4ck", "폭ㄹㅕㄱ"],
+          "spacing": ["폭 력", "살 인", "k i l l", "a t t a c k"],
+          "homoglyphs": ["роlісе", "vіоlеnсе", "폭력ㅋ"],
+          "encoding": ["&#112;&#111;&#108;&#105;&#99;&#101;", "%ED%8F%AD%EB%A0%A5"],
+          "synonym_substitution": ["harm", "damage", "hurt", "injure", "상해", "피해"]
+        }
+      },
+      "hate_speech": {
+        "keywords": ["차별", "혐오", "hate", "discrimination", "racist", "sexist"],
+        "patterns": [
+          ".*(?:인종|성별|종교).*(?:차별|혐오|hate).*",
+          ".*(?:특정집단).*(?:비하|모독).*"
+        ],
+        "severity": "high",
+        "mutation_variants": {
+          "asterisk_replacement": ["h*te", "d*scr*m*n*t*on", "차*별"],
+          "reverse_text": ["etah", "noitanimircsid"],
+          "zalgo_text": ["h̶a̶t̶e̶", "차̷별̷"],
+          "invisible_chars": ["hate\u200b", "차별\u200c"],
+          "case_variations": ["HaTe", "DiScRiMiNaTiOn", "차Ａ별"]
+        }
+      },
+      "self_harm": {
+        "keywords": ["자살", "자해", "suicide", "self-harm", "죽고싶", "목매"],
+        "patterns": [
+          ".*(?:자살|suicide).*(?:방법|how).*",
+          ".*(?:자해|self.harm).*(?:도구|tool).*"
+        ],
+        "severity": "critical",
+        "mutation_variants": {
+          "phonetic": ["suicid", "자쌀", "자햬"],
+          "abbreviation": ["s.h.", "자.해", "s*icide"],
+          "emoji_substitution": ["💀", "🔪", "⚰️"],
+          "misspelling": ["suiside", "selfharm", "자쌀"],
+          "context_hiding": ["ending it all", "permanent solution"]
+        }
+      },
+      "illegal_activities": {
+        "keywords": ["마약", "해킹", "drugs", "hacking", "도둑질", "사기"],
+        "patterns": [
+          ".*(?:마약|drug).*(?:제조|만들|create).*",
+          ".*(?:해킹|hack).*(?:방법|tutorial).*",
+          ".*(?:불법|illegal).*(?:활동|activity).*"
+        ],
+        "severity": "high",
+        "mutation_variants": {
+          "code_substitution": ["dr0gs", "h4ck1ng", "마ㅇㅑㄱ"],
+          "foreign_script": ["наск", "друг", "мара"],
+          "base64_encoded": ["ZHJ1Z3M=", "aGFja2luZw=="],
+          "rot13": ["qehtf", "unpxvat"],
+          "mixed_alphabet": ["드럭s", "해킹ing"]
+        }
+      }
+    },
+    "advanced_mutation_detection": {
+      "text_transformations": [
+        {
+          "name": "unicode_normalization",
+          "patterns": ["\\u[0-9A-Fa-f]{4}", "&#[0-9]+;", "%[0-9A-Fa-f]{2}"]
+        },
+        {
+          "name": "whitespace_manipulation",
+          "patterns": ["\\s{2,}", "\\t+", "\\n+", "\u00A0", "\u2000-\u200F"]
+        },
+        {
+          "name": "direction_override",
+          "patterns": ["\u202E", "\u202D", "\u202A", "\u202B"]
+        },
+        {
+          "name": "combining_characters",
+          "patterns": ["\u0300-\u036F", "\u1AB0-\u1AFF", "\u1DC0-\u1DFF"]
+        }
+      ],
+      "linguistic_evasion": {
+        "euphemisms": {
+          "violence": ["unalive", "sleep forever", "remove from existence"],
+          "drugs": ["candy", "medicine", "special herbs"],
+          "weapons": ["tools", "items", "equipment"]
+        },
+        "contextual_hiding": [
+          "asking for a friend",
+          "hypothetically speaking",
+          "in a video game",
+          "for educational purposes"
+        ]
+      }
+    }
+  }
+}
